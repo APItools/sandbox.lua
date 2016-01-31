@@ -90,7 +90,7 @@ recommended to discard it after use.
 
     local env = {amount = 1}
     sandbox.run('amount = amount + 1', {env = env})
-    assert(env.amount = 2)
+    assert(env.amount == 2)
 
 
 ### sandbox.run
