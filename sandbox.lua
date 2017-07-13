@@ -45,7 +45,7 @@ local BASE_ENV = {}
 -- * string.dump: Can display confidential server info (implementation of functions)
 -- * string.rep: Can allocate millions of bytes in one go
 -- * math.randomseed: Can affect the host sytem
--- * io.*, os.*: Most stuff there is non-save
+-- * io.*, os.*: Most stuff there is non-safe
 
 
 -- Safe packages/functions below
