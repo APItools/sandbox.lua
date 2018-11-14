@@ -1,5 +1,9 @@
 local sandbox = require 'sandbox'
 
+local assert_equal = assert.are.same
+local assert_error = assert.error
+local assert_not_error = function(...) assert(pcall(...)) end
+
 describe('sandbox.run', function()
 
   describe('when handling base cases', function()
@@ -23,6 +27,11 @@ describe('sandbox.run', function()
     it('does not allow access to not-safe stuff', function()
       assert_error(function() sandbox.run('return setmetatable({}, {})') end)
       assert_error(function() sandbox.run('return string.rep("hello", 5)') end)
+    end)
+
+    it('returns multiple values on success', function()
+      local a, b, c = sandbox.run('return 1, 2, 3')
+      assert_equal({1, 2, 3}, {a, b, c})
     end)
   end)
 

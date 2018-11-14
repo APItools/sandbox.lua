@@ -81,6 +81,25 @@ table.insert table.maxn table.remove table.sort
   end
 end)
 
+local setfenv = _G.setfenv or function(fn, env)
+  local i = 1
+  while true do
+    local name = debug.getupvalue(fn, i)
+    if name == "_ENV" then
+      debug.upvaluejoin(fn, i, (function()
+        return env
+      end), 1)
+      break
+    elseif not name then
+      break
+    end
+
+    i = i + 1
+  end
+
+  return fn
+end
+
 local function protect_module(module, module_name)
   return setmetatable({}, {
     __index = module,
@@ -115,6 +134,8 @@ local function cleanup()
   string.rep = string_rep
 end
 
+local loadstring = _G.loadstring or load
+
 -- Public interface: sandbox.protect
 function sandbox.protect(f, options)
   if type(f) == 'string' then f = assert(loadstring(f)) end
@@ -143,12 +164,14 @@ function sandbox.protect(f, options)
 
     string.rep = nil
 
-    local ok, result = pcall(f, ...)
+    local ok, packed_results = pcall(function(...)
+      return table.pack(f(...))
+    end, ...)
 
     cleanup()
 
     if not ok then error(result) end
-    return result
+    return table.unpack(packed_results)
   end
 end
 
